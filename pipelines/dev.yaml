@@ -39,7 +39,7 @@ stages:
   displayName: Scanning
   jobs: 
   - job: TFSecScanningJob
-    displayName: TFSEC Scanning Wala Job
+    displayName: TFSEC Scanning
     pool: Default
     steps:
     - task: tfsec@1
@@ -48,12 +48,19 @@ stages:
         dir: $(workDir)
 
   - job: TfLintScanningJob
-    displayName: TFLINT Scanning Wala Job
+    displayName: TFLINT Scanning
     pool: Default
     steps:
-    - task: CmdLine@2
+     - task: PowerShell@2
+      continueOnError: true
       inputs:
-        script: 'echo Hello world'
+        targetType: 'inline'
+        script: |
+          winget install TerraformLinters.tflint     
+          ls   
+          tflint
+        errorActionPreference: 'continue'        
+        workingDirectory: $(workDir)
 
 - stage: Deploy
   displayName: Deploy
